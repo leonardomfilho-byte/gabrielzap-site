@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gabriel — Cobrança no automático</title>
+<meta name="description" content="O Gabriel cobra o seu crediário pelo WhatsApp da sua loja, todo dia, sozinho. Lembrete antes do vencimento, multa e juros calculados e a chave Pix na mensagem.">
+<link rel="canonical" href="https://gabrielzap.com.br/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://gabrielzap.com.br/">
+<meta property="og:title" content="Gabriel — Cobrança no automático">
+<meta property="og:description" content="O Gabriel cobra o seu crediário pelo WhatsApp da sua loja, todo dia, sozinho.">
+<meta property="og:image" content="https://gabrielzap.com.br/logo-gabriel.png">
+<link rel="icon" type="image/png" href="logo-gabriel.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050B18;
+    --bg-2: #081224;
+    --card: #0B1524;
+    --border: #1A2942;
+    --text: #E6EDF7;
+    --muted: #8A9BB5;
+    --accent: #2DD4BF;
+    --accent-2: #22D3EE;
+    --accent-ink: #032420;
+    --wa: #25D366;
+    --wa-bubble: #0F2E26;
+    --danger: #F87171;
+    --radius: 18px;
+    --max: 1160px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+  .grad {
+    background: linear-gradient(100deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  /* fundo */
+  .bg-glow {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(600px 400px at 85% 10%, rgba(45,212,191,.16), transparent 70%),
+      radial-gradient(500px 500px at 0% 60%, rgba(34,211,238,.08), transparent 70%);
+  }
+  .bg-grid {
+    position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%);
+  }
+
+  /* nav */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(14px);
+    background: rgba(5,11,24,.72);
+    border-bottom: 1px solid transparent;
+    transition: border-color .3s;
+  }
+  nav.scrolled { border-color: var(--border); }
+  .nav-in { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 22px; letter-spacing: -.02em; }
+  .logo-img { width: 38px; height: 38px; object-fit: contain; filter: drop-shadow(0 0 12px rgba(45,212,191,.45)); }
+  .nav-links { display: flex; gap: 32px; font-size: 15px; color: var(--muted); }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta { display: flex; gap: 12px; align-items: center; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 22px; border-radius: 999px; font-weight: 700; font-size: 15px;
+    transition: transform .15s, box-shadow .2s, background .2s;
+    border: 1px solid transparent; cursor: pointer; white-space: nowrap;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary {
+    background: var(--accent); color: var(--accent-ink);
+    box-shadow: 0 8px 30px rgba(45,212,191,.35);
+  }
+  .btn-primary:hover { box-shadow: 0 10px 40px rgba(45,212,191,.55); }
+  .btn-ghost { border-color: var(--border); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--accent); }
+  .btn-lg { padding: 16px 28px; font-size: 16px; }
+  .btn svg { width: 18px; height: 18px; }
+
+  /* hero */
+  .hero { position: relative; padding: 72px 0 96px; }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px 6px 8px; border-radius: 999px;
+    background: rgba(45,212,191,.08); border: 1px solid rgba(45,212,191,.25);
+    font-size: 13px; color: var(--accent); font-weight: 600;
+  }
+  .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--wa); box-shadow: 0 0 10px var(--wa); animation: pulse 2s infinite; }
+  @keyframes pulse { 50% { opacity: .4; } }
+  h1 {
+    font-size: clamp(40px, 6vw, 68px); line-height: 1.04; letter-spacing: -.035em;
+    font-weight: 800; margin: 22px 0 22px;
+  }
+  .lead { font-size: 19px; color: var(--muted); max-width: 540px; }
+  .hero-ctas { display: flex; gap: 14px; margin: 34px 0 30px; flex-wrap: wrap; }
+  .trust { display: flex; gap: 22px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
+  .trust span { display: inline-flex; align-items: center; gap: 7px; }
+  .trust svg { width: 16px; height: 16px; color: var(--accent); }
+
+  /* telefone */
+  .phone-wrap { position: relative; display: flex; justify-content: center; }
+  .phone-wrap::before {
+    content: ""; position: absolute; width: 380px; height: 380px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(45,212,191,.35), transparent 65%);
+    top: 50%; left: 50%; transform: translate(-50%,-50%); filter: blur(30px);
+  }
+  .phone {
+    position: relative; width: 320px; border-radius: 44px; padding: 12px;
+    background: linear-gradient(160deg, #1f2a3d, #0b1220);
+    box-shadow: 0 40px 80px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.08);
+    transform: rotate(-3deg);
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float { 50% { transform: rotate(-3deg) translateY(-10px); } }
+  .screen { border-radius: 34px; overflow: hidden; background: #0B141A; }
+  .wa-head {
+    display: flex; align-items: center; gap: 10px; padding: 34px 14px 12px;
+    background: #1F2C34;
+  }
+  .wa-av { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,#f59e0b,#ef4444); display: grid; place-items: center; font-weight: 800; font-size: 13px; color: #fff; }
+  .wa-name { font-weight: 700; font-size: 14px; line-height: 1.2; }
+  .wa-sub { font-size: 11px; color: #8696A0; display: flex; align-items: center; gap: 4px; }
+  .wa-sub svg { width: 12px; height: 12px; color: var(--wa); }
+  .chat {
+    padding: 16px 12px 18px; min-height: 470px; display: flex; flex-direction: column; gap: 8px;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(255,255,255,.025) 1px, transparent 1px) 0 0/18px 18px,
+      #0B141A;
+  }
+  .day { align-self: center; font-size: 10.5px; color: #8696A0; background: #182229; padding: 3px 10px; border-radius: 6px; margin: 4px 0; }
+  .msg {
+    max-width: 86%; padding: 8px 10px 6px; border-radius: 10px; font-size: 12.5px; line-height: 1.45;
+    opacity: 0; transform: translateY(8px); animation: in .5s forwards;
+  }
+  .msg .t { display: block; text-align: right; font-size: 10px; color: #8696A0; margin-top: 2px; }
+  .msg.out { align-self: flex-end; background: #005C4B; border-top-right-radius: 3px; }
+  .msg.in  { align-self: flex-start; background: #202C33; border-top-left-radius: 3px; }
+  .msg b { font-weight: 700; }
+  .pix {
+    margin-top: 6px; padding: 7px 9px; border-radius: 7px; background: rgba(0,0,0,.25);
+    font-family: ui-monospace, monospace; font-size: 11px; display: flex; justify-content: space-between; gap: 8px;
+  }
+  .pix span:last-child { color: var(--accent); font-weight: 700; font-family: inherit; }
+  .m1 { animation-delay: .4s } .m2 { animation-delay: 1.4s } .m3 { animation-delay: 2.6s } .m4 { animation-delay: 3.6s }
+  @keyframes in { to { opacity: 1; transform: none; } }
+  .badge-float {
+    position: absolute; right: -10px; bottom: 70px; z-index: 2;
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 12px 14px; display: flex; gap: 10px; align-items: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,.4);
+    opacity: 0; animation: in .6s 4.4s forwards;
+  }
+  .badge-float .ic { width: 34px; height: 34px; border-radius: 10px; background: rgba(37,211,102,.15); color: var(--wa); display: grid; place-items: center; }
+  .badge-float .ic svg { width: 18px; height: 18px; }
+  .badge-float small { display: block; font-size: 11px; color: var(--muted); }
+  .badge-float strong { font-size: 14px; }
+
+  /* seções */
+  section { padding: 96px 0; position: relative; }
+  .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+  h2 { font-size: clamp(30px, 4vw, 46px); line-height: 1.1; letter-spacing: -.03em; font-weight: 800; margin: 12px 0 16px; }
+  .sec-lead { color: var(--muted); font-size: 18px; max-width: 620px; }
+  .center { text-align: center; }
+  .center .sec-lead { margin: 0 auto; }
+
+  /* dor */
+  .pain { background: linear-gradient(180deg, transparent, var(--bg-2) 30%, var(--bg-2) 70%, transparent); }
+  .pain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 48px; }
+  .pain-card { padding: 28px; border-radius: var(--radius); background: var(--card); border: 1px solid var(--border); }
+  .pain-card .n { font-size: 40px; font-weight: 800; color: var(--danger); letter-spacing: -.03em; line-height: 1; }
+  .pain-card h3 { font-size: 18px; margin: 14px 0 8px; }
+  .pain-card p { color: var(--muted); font-size: 15px; }
+
+  /* passos */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px; counter-reset: s; position: relative; }
+  .step { position: relative; padding: 32px 28px; border-radius: var(--radius); border: 1px solid var(--border); background: linear-gradient(180deg, var(--card), transparent); }
+  .step::before {
+    counter-increment: s; content: counter(s);
+    display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px;
+    background: rgba(45,212,191,.12); color: var(--accent); font-weight: 800; font-size: 18px;
+    border: 1px solid rgba(45,212,191,.3); margin-bottom: 20px;
+  }
+  .step h3 { font-size: 20px; margin-bottom: 8px; }
+  .step p { color: var(--muted); font-size: 15px; }
+
+  /* recursos (bento) */
+  .bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; margin-top: 56px; }
+  .tile {
+    grid-column: span 2; padding: 28px; border-radius: var(--radius);
+    background: var(--card); border: 1px solid var(--border);
+    transition: border-color .25s, transform .25s;
+  }
+  .tile:hover { border-color: rgba(45,212,191,.45); transform: translateY(-3px); }
+  .tile.wide { grid-column: span 3; }
+  .tile .ic { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: rgba(45,212,191,.1); color: var(--accent); margin-bottom: 18px; }
+  .tile .ic svg { width: 22px; height: 22px; }
+  .tile h3 { font-size: 18px; margin-bottom: 6px; }
+  .tile p { color: var(--muted); font-size: 15px; }
+  .fatura {
+    margin-top: 20px; border-radius: 14px; background: #fff; color: #0f172a; padding: 16px 18px; font-size: 13px;
+  }
+  .fatura .row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #e2e8f0; }
+  .fatura .row:last-of-type { border: 0; font-weight: 800; font-size: 15px; padding-top: 8px; }
+  .fatura .row span:last-child { font-variant-numeric: tabular-nums; }
+  .fatura .juros { color: #b45309; }
+  .fatura .copy { margin-top: 10px; display: block; text-align: center; background: #0f766e; color: #fff; border-radius: 8px; padding: 8px; font-weight: 700; font-size: 12px; letter-spacing: .04em; }
+
+  /* gabe */
+  .gabe { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+  .gabe .eyebrow { color: #60A5FA; }
+  .gabe-grad { background: linear-gradient(100deg, #60A5FA, #3B82F6 60%, #22D3EE); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .gabe-list { list-style: none; display: grid; gap: 14px; margin-top: 26px; }
+  .gabe-list li { display: flex; gap: 12px; color: var(--muted); font-size: 16px; }
+  .gabe-list li b { color: var(--text); font-weight: 700; }
+  .gabe-list svg { width: 20px; height: 20px; color: #60A5FA; flex-shrink: 0; margin-top: 3px; }
+  .gabe-stage { position: relative; display: flex; justify-content: center; }
+  .gabe-stage::before {
+    content: ""; position: absolute; width: 360px; height: 360px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(59,130,246,.32), transparent 65%);
+    top: 50%; left: 50%; transform: translate(-50%,-50%); filter: blur(30px);
+  }
+  .gabe-panel {
+    position: relative; width: 100%; max-width: 400px; border-radius: 22px; overflow: hidden;
+    background: var(--card); border: 1px solid rgba(96,165,250,.3);
+    box-shadow: 0 30px 70px rgba(0,0,0,.5);
+  }
+  .gabe-top { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border); background: linear-gradient(90deg, rgba(59,130,246,.18), transparent); }
+  .gabe-top img { width: 40px; height: 40px; filter: drop-shadow(0 0 10px rgba(96,165,250,.6)); }
+  .gabe-top b { display: block; font-size: 15px; line-height: 1.2; }
+  .gabe-top small { font-size: 12px; color: var(--muted); }
+  .gabe-chat { padding: 18px 16px 20px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
+  .gb { max-width: 88%; padding: 10px 13px; border-radius: 14px; line-height: 1.5; }
+  .gb.bot { align-self: flex-start; background: #12213A; border-top-left-radius: 4px; }
+  .gb.user { align-self: flex-end; background: #2563EB; color: #fff; border-top-right-radius: 4px; }
+  .gb b { color: #93C5FD; }
+  .gabe-input { margin: 0 16px 16px; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+  .gabe-fab {
+    position: absolute; right: -14px; bottom: -22px; width: 74px; height: 74px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #1E3A8A, #0B1524); border: 1px solid rgba(96,165,250,.45);
+    display: grid; place-items: center; box-shadow: 0 0 30px rgba(59,130,246,.45);
+    animation: float 5s ease-in-out infinite;
+  }
+  .gabe-fab img { width: 54px; height: 54px; }
+  @media (max-width: 960px) { .gabe { grid-template-columns: 1fr; } .gabe-fab { right: auto; left: 4px; } }
+
+  /* calculadora */
+  .roi {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    border-radius: 24px; overflow: hidden; border: 1px solid var(--border); margin-top: 48px;
+  }
+  .roi-in { padding: 40px; background: var(--card); }
+  .roi-out { padding: 40px; background: linear-gradient(140deg, rgba(45,212,191,.16), rgba(34,211,238,.05)); display: flex; flex-direction: column; justify-content: center; }
+  .field { margin-bottom: 28px; }
+  .field label { display: flex; justify-content: space-between; font-weight: 600; font-size: 15px; margin-bottom: 12px; }
+  .field label output { color: var(--accent); font-variant-numeric: tabular-nums; }
+  input[type=range] { width: 100%; accent-color: var(--accent); height: 6px; cursor: pointer; }
+  .roi-out .big { font-size: clamp(40px, 5vw, 60px); font-weight: 800; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .roi-out p { color: var(--muted); margin-top: 10px; }
+  .roi-out .note { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 15px; color: var(--text); }
+
+  /* preços */
+  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 56px; align-items: stretch; }
+  .plan { position: relative; padding: 34px 30px; border-radius: 22px; background: var(--card); border: 1px solid var(--border); display: flex; flex-direction: column; }
+  .plan.hot { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 30px 60px rgba(45,212,191,.12); }
+  .plan .tag { position: absolute; top: -12px; left: 30px; background: var(--accent); color: var(--accent-ink); font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 999px; }
+  .plan h3 { font-size: 20px; }
+  .plan .for { color: var(--muted); font-size: 14px; margin-top: 4px; min-height: 44px; }
+  .plan .price { font-size: 46px; font-weight: 800; letter-spacing: -.03em; margin: 20px 0 4px; }
+  .plan .price small { font-size: 16px; color: var(--muted); font-weight: 500; }
+  .plan ul { list-style: none; margin: 22px 0 28px; display: grid; gap: 12px; font-size: 15px; flex: 1; }
+  .plan li { display: flex; gap: 10px; }
+  .plan li svg { width: 18px; height: 18px; color: var(--accent); flex-shrink: 0; margin-top: 3px; }
+  .plan .btn { width: 100%; }
+
+  /* faq */
+  .faq { max-width: 780px; margin: 48px auto 0; }
+  details { border-bottom: 1px solid var(--border); padding: 22px 0; }
+  summary { cursor: pointer; font-weight: 700; font-size: 17px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: var(--accent); font-size: 24px; line-height: 1; transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { color: var(--muted); margin-top: 12px; font-size: 16px; }
+
+  /* cta final */
+  .final {
+    margin: 0 auto; border-radius: 28px; padding: 72px 40px; text-align: center; position: relative; overflow: hidden;
+    background: radial-gradient(600px 300px at 50% 0%, rgba(45,212,191,.28), transparent 70%), var(--card);
+    border: 1px solid rgba(45,212,191,.3);
+  }
+  .final h2 { max-width: 700px; margin: 0 auto 16px; }
+  .final .hero-ctas { justify-content: center; margin-bottom: 0; }
+
+  footer { padding: 48px 0 40px; color: var(--muted); font-size: 14px; }
+  .foot { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; border-top: 1px solid var(--border); padding-top: 32px; }
+  .foot nav { position: static; background: none; backdrop-filter: none; display: flex; gap: 24px; border: 0; }
+  .foot a:hover { color: var(--text); }
+
+  /* whatsapp flutuante */
+  .wa-fab {
+    position: fixed; right: 20px; bottom: 20px; z-index: 60;
+    width: 58px; height: 58px; border-radius: 50%; background: var(--wa); color: #fff;
+    display: grid; place-items: center; box-shadow: 0 10px 30px rgba(37,211,102,.45);
+    transition: transform .2s;
+  }
+  .wa-fab:hover { transform: scale(1.08); }
+  .wa-fab svg { width: 30px; height: 30px; }
+
+  /* reveal */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.on { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .phone, .msg, .badge-float, .pill .dot { animation: none !important; opacity: 1; transform: none; }
+  }
+
+  /* responsivo */
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .phone-wrap { margin-top: 20px; }
+    .pain-grid, .steps, .plans { grid-template-columns: 1fr; }
+    .bento { grid-template-columns: 1fr; }
+    .tile, .tile.wide { grid-column: auto; }
+    .roi { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .plan.hot { order: -1; }
+  }
+  @media (max-width: 560px) {
+    .wrap { padding: 0 16px; }
+    .hero { padding: 40px 0 64px; }
+    section { padding: 64px 0; }
+    .nav-cta .btn-ghost { display: none; }
+    .phone { width: 288px; }
+    .badge-float { right: 0; }
+    .roi-in, .roi-out { padding: 28px 22px; }
+    .final { padding: 48px 22px; }
+    .hero-ctas .btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+
+<nav id="nav">
+  <div class="wrap nav-in">
+    <a href="#" class="logo"><img src="logo-gabriel.png" alt="" class="logo-img">Gabriel</a>
+    <div class="nav-links">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#recursos">Recursos</a>
+      <a href="#gabe">Gabe</a>
+      <a href="#precos">Preços</a>
+      <a href="#duvidas">Dúvidas</a>
+    </div>
+    <div class="nav-cta">
+      <a href="https://gabriel-web-147676864578.southamerica-east1.run.app/login" class="btn btn-ghost">Entrar</a>
+      <a href="#precos" class="btn btn-primary">Começar agora</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="bg-grid"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <span class="pill"><span class="dot"></span>WhatsApp oficial da Meta · do número da sua loja</span>
+      <h1>Seu crediário cobrado <span class="grad">no automático.</span></h1>
+      <p class="lead">O Gabriel lembra o cliente antes do vencimento, cobra com educação depois, calcula multa e juros e manda a chave Pix da loja. Todo dia, às 9h, sem ninguém da sua equipe ter que escrever nada.</p>
+      <div class="hero-ctas">
+        <a href="#precos" class="btn btn-primary btn-lg">Quero cobrar no automático</a>
+        <a href="https://wa.me/5591998250240?text=Ol%C3%A1!%20Quero%20conhecer%20o%20Gabriel." class="btn btn-ghost btn-lg" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg>
+          Falar com a gente
+        </a>
+      </div>
+      <div class="trust">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Importa sua planilha</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Roda com o PC desligado</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Planos a partir de R$ 49</span>
+      </div>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="screen">
+          <div class="wa-head">
+            <div class="wa-av">PC</div>
+            <div>
+              <div class="wa-name">Primos Calçados</div>
+              <div class="wa-sub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4zm-2 16-4-4 1.4-1.4L10 14.2l6.6-6.6L18 9l-8 8z"/></svg>Conta comercial</div>
+            </div>
+          </div>
+          <div class="chat">
+            <span class="day">05/10</span>
+            <div class="msg out m1">Oi, Kamila! 😊 Passando pra lembrar que sua parcela de <b>R$ 75,85</b> vence <b>dia 08</b>.<div class="pix"><span>Pix: primos@loja.com</span><span>COPIAR</span></div><span class="t">09:00 ✓✓</span></div>
+            <span class="day">11/10</span>
+            <div class="msg out m2">Kamila, a parcela do dia 08 ficou em aberto. Hoje o valor atualizado é <b>R$ 76,60</b>, com os juros da política da loja. Qualquer coisa, é só responder aqui.<span class="t">09:00 ✓✓</span></div>
+            <div class="msg in m3">Oi! Esqueci totalmente, vou pagar agora 🙏<span class="t">09:14</span></div>
+            <div class="msg in m4">Pronto, mandei o Pix 👍<span class="t">09:21</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="badge-float">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div><small>Carnê recuperado</small><strong>+ R$ 76,60</strong></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="pain">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">O problema</span>
+      <h2>Cobrar carnê não devia ser o trabalho da sua vendedora.</h2>
+      <p class="sec-lead">Mandar mensagem um por um, anotar quem pagou, refazer conta de juros. Enquanto isso, o balcão fica sem ninguém vendendo.</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card reveal">
+        <div class="n">Horas</div>
+        <h3>por semana no WhatsApp</h3>
+        <p>Cada parcela vencida vira uma conversa manual, uma por uma, no celular da loja.</p>
+      </div>
+      <div class="pain-card reveal">
+        <div class="n">Esquece</div>
+        <h3>quem trabalha em turno</h3>
+        <p>O cliente não ficou sem dinheiro. Só não lembrou do dia e virou inadimplente sem querer.</p>
+      </div>
+      <div class="pain-card reveal">
+        <div class="n">Conta</div>
+        <h3>de juros na calculadora</h3>
+        <p>Multa, juros por dia, carência… cada um calcula de um jeito e o cliente desconfia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="como-funciona">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">Como funciona</span>
+      <h2>Três passos e o Gabriel <span class="grad">assume a cobrança.</span></h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <h3>Importe sua planilha</h3>
+        <p>Suba a carteira em CSV ou Excel: cliente, telefone, valor e vencimento. Pronto, tá tudo dentro.</p>
+      </div>
+      <div class="step reveal">
+        <h3>Ajuste a sua régua</h3>
+        <p>Defina quando lembrar, quando cobrar, a multa, os juros e os dias de carência da sua loja.</p>
+      </div>
+      <div class="step reveal">
+        <h3>Deixe rodar</h3>
+        <p>Todo dia às 9h o Gabriel manda as mensagens certas pra quem precisa. Você acompanha tudo no painel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="recursos">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">Recursos</span>
+      <h2>Tudo o que a cobrança da sua loja precisa.</h2>
+      <p class="sec-lead">Feito pra crediário próprio de loja pequena e média. Sem instalar nada, sem treinamento.</p>
+    </div>
+    <div class="bento">
+      <div class="tile wide reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg></div>
+        <h3>Sai do número da sua loja</h3>
+        <p>Usa a API oficial do WhatsApp Business, da Meta. Não é número compartilhado nem disparo pirata que derruba o seu chip. O cliente reconhece quem está falando.</p>
+      </div>
+      <div class="tile wide reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg></div>
+        <h3>Fatura detalhada por link</h3>
+        <p>Uma página que o cliente abre sem login, com valor original, juros, total atualizado e a chave Pix pronta pra copiar.</p>
+        <div class="fatura">
+          <div class="row"><span>Parcela 08/010</span><span>R$ 75,85</span></div>
+          <div class="row juros"><span>Juros (0,33% a.d.)</span><span>R$ 0,75</span></div>
+          <div class="row"><span>Total hoje</span><span>R$ 76,60</span></div>
+          <span class="copy">COPIAR CHAVE PIX</span>
+        </div>
+      </div>
+      <div class="tile reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3>Antes e depois do vencimento</h3>
+        <p>Lembrete amigável antes, cobrança escalonada depois. Cada toque no dia certo.</p>
+      </div>
+      <div class="tile reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16M7 15l3-4 3 3 5-7"/></svg></div>
+        <h3>Multa e juros sem conta</h3>
+        <p>Calcula conforme a política da loja, com carência configurável. Todo mundo vê o mesmo número.</p>
+      </div>
+      <div class="tile reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg></div>
+        <h3>Painel de acompanhamento</h3>
+        <p>Histórico de disparos, respostas dos clientes e a situação de cada cobrança, num lugar só.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="gabe">
+  <div class="wrap gabe">
+    <div class="reveal">
+      <span class="eyebrow">Conheça o Gabe</span>
+      <h2>Ficou com dúvida? <span class="gabe-grad">Pergunta pro Gabe.</span></h2>
+      <p class="sec-lead">O Gabe é o assistente de inteligência artificial que mora dentro do Gabriel. Ele te explica como usar qualquer parte do sistema, na hora, sem você precisar abrir manual nem esperar atendimento.</p>
+      <ul class="gabe-list">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg><span><b>Responde em português simples</b>, curto e direto, como um colega que já conhece o sistema.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg><span><b>Sabe em que tela você está.</b> Pergunte "o que é isso aqui?" e ele entende.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><b>Está em todas as telas</b>, num botão flutuante que você arrasta pra onde quiser.</span></li>
+      </ul>
+    </div>
+    <div class="gabe-stage reveal">
+      <div class="gabe-panel">
+        <div class="gabe-top">
+          <img src="logo-gabe-simbolo.png" alt="">
+          <div><b>Gabe</b><small>Seu assistente virtual</small></div>
+        </div>
+        <div class="gabe-chat">
+          <div class="gb bot">Oi! Eu sou o Gabe 👋 Posso te ajudar a usar qualquer parte do Gabriel. O que você quer saber?</div>
+          <div class="gb user">Onde eu mudo os juros de atraso?</div>
+          <div class="gb bot">Vá em <b>Régua de cobrança</b>. Lá você ajusta juros, multa e a chave Pix da loja. As próximas mensagens já saem com o valor novo.</div>
+          <div class="gb user">E se o cliente responder a mensagem?</div>
+          <div class="gb bot">A cobrança dele pausa e a resposta aparece em <b>Respostas</b>. Se ele pagou, marque as parcelas e clique em <b>Confirmar baixa e resolver conversa</b>.</div>
+        </div>
+        <div class="gabe-input">Pergunte algo ao Gabe...</div>
+      </div>
+      <div class="gabe-fab"><img src="logo-gabe-simbolo.png" alt=""></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">Faça a conta</span>
+      <h2>Um carnê recuperado <span class="grad">já paga o mês.</span></h2>
+      <p class="sec-lead">Arraste e veja quanto volta pro caixa quando o cliente que ia esquecer é lembrado na hora certa.</p>
+    </div>
+    <div class="roi reveal">
+      <div class="roi-in">
+        <div class="field">
+          <label for="parcela">Parcela média do carnê <output id="o-parcela">R$ 80</output></label>
+          <input type="range" id="parcela" min="30" max="500" step="10" value="80">
+        </div>
+        <div class="field">
+          <label for="carnes">Carnês recuperados por mês <output id="o-carnes">5</output></label>
+          <input type="range" id="carnes" min="1" max="60" step="1" value="5">
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label for="plano">Plano</label>
+          <div style="display:flex; gap:8px; flex-wrap:wrap" id="planos">
+            <button class="btn btn-primary" data-v="49" style="padding:9px 16px">Starter · R$ 49</button>
+            <button class="btn btn-ghost" data-v="149" style="padding:9px 16px">Pro · R$ 149</button>
+            <button class="btn btn-ghost" data-v="349" style="padding:9px 16px">Enterprise · R$ 349</button>
+          </div>
+        </div>
+      </div>
+      <div class="roi-out">
+        <span class="eyebrow">Volta pro caixa no mês</span>
+        <div class="big grad" id="r-total">R$ 400</div>
+        <p id="r-liquido">R$ 351 a mais, já descontando o plano.</p>
+        <div class="note" id="r-note">Com <b>1 carnê</b> recuperado o Gabriel já se pagou.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="precos">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">Preços</span>
+      <h2>Simples, mensal e sem fidelidade.</h2>
+      <p class="sec-lead">Escolha pelo tamanho da sua carteira. Pagamento por Pix, direto no sistema.</p>
+    </div>
+    <div class="plans">
+      <div class="plan reveal">
+        <h3>Starter</h3>
+        <p class="for">Loja pequena, o dono cobra sozinho.</p>
+        <div class="price">R$ 49<small>/mês</small></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>100 cobranças por mês</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>1 usuário</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Régua de cobrança automática</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Importação CSV/Excel</li>
+        </ul>
+        <a href="https://gabriel-web-147676864578.southamerica-east1.run.app/registro" class="btn btn-ghost">Começar no Starter</a>
+      </div>
+      <div class="plan hot reveal">
+        <span class="tag">Mais escolhido</span>
+        <h3>Pro</h3>
+        <p class="for">Loja com equipe e carteira grande: móveis, eletro, magazine.</p>
+        <div class="price">R$ 149<small>/mês</small></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>500 cobranças por mês</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>3 usuários</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Tudo do Starter</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Relatórios</li>
+        </ul>
+        <a href="https://gabriel-web-147676864578.southamerica-east1.run.app/registro" class="btn btn-primary">Começar no Pro</a>
+      </div>
+      <div class="plan reveal">
+        <h3>Enterprise</h3>
+        <p class="for">Rede com mais de uma loja.</p>
+        <div class="price">R$ 349<small>/mês</small></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Cobranças ilimitadas</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Usuários ilimitados</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Tudo do Pro</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Suporte prioritário</li>
+        </ul>
+        <a href="https://wa.me/5591998250240?text=Ol%C3%A1!%20Tenho%20interesse%20no%20plano%20Enterprise%20do%20Gabriel." class="btn btn-ghost" target="_blank" rel="noopener">Falar com a gente</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="duvidas">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">Dúvidas</span>
+      <h2>Perguntas frequentes</h2>
+    </div>
+    <div class="faq reveal">
+      <details>
+        <summary>A mensagem sai de qual número?</summary>
+        <p>Do WhatsApp Business da sua própria loja, conectado pela API oficial da Meta. O cliente recebe do número que ele já conhece.</p>
+      </details>
+      <details>
+        <summary>Preciso deixar o computador ligado?</summary>
+        <p>Não. O Gabriel roda na nuvem e dispara a régua todo dia às 9h, mesmo com o computador da loja desligado.</p>
+      </details>
+      <details>
+        <summary>Como o cliente paga?</summary>
+        <p>Por Pix, na chave da sua loja, que vai junto na mensagem. O dinheiro cai direto na sua conta — o Gabriel nunca toca no pagamento.</p>
+      </details>
+      <details>
+        <summary>O Gabriel dá baixa sozinho quando o cliente paga?</summary>
+        <p>Hoje a baixa é dada com um clique no painel. A baixa automática pelo Pix está em desenvolvimento.</p>
+      </details>
+      <details>
+        <summary>Quem é o Gabe?</summary>
+        <p>É o assistente de inteligência artificial que vem dentro do Gabriel, em todos os planos. Ele tira dúvidas sobre como usar o sistema. Quem cobra o seu cliente é a régua, pelo WhatsApp da sua loja. O Gabe ajuda você, não fala com o seu cliente.</p>
+      </details>
+      <details>
+        <summary>Tem boleto?</summary>
+        <p>Ainda não. A cobrança é feita por Pix.</p>
+      </details>
+      <details>
+        <summary>Tem fidelidade?</summary>
+        <p>Não. O plano é mensal, pago por Pix, e você cancela quando quiser.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="final reveal">
+      <h2>Pare de correr atrás de carnê. <span class="grad">Deixe o Gabriel cobrar.</span></h2>
+      <p class="sec-lead" style="margin:0 auto">Fale com a gente pelo WhatsApp e a gente te ajuda a importar a sua carteira.</p>
+      <div class="hero-ctas">
+        <a href="https://wa.me/5591998250240?text=Ol%C3%A1!%20Quero%20conhecer%20o%20Gabriel." class="btn btn-primary btn-lg" target="_blank" rel="noopener">Chamar no WhatsApp · (91) 99825-0240</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <a href="#" class="logo" style="font-size:18px"><img src="logo-gabriel.png" alt="" class="logo-img" style="width:30px;height:30px">Gabriel</a>
+    <span>© 2026 Gabriel · gabrielzap.com.br</span>
+    <nav>
+      <a href="https://gabriel-web-147676864578.southamerica-east1.run.app/termos">Termos de uso</a>
+      <a href="https://gabriel-web-147676864578.southamerica-east1.run.app/privacidade">Privacidade</a>
+    </nav>
+  </div>
+</footer>
+
+<a class="wa-fab" href="https://wa.me/5591998250240?text=Ol%C3%A1!%20Quero%20conhecer%20o%20Gabriel." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg>
+</a>
+
+<script>
+  // nav com borda ao rolar
+  const nav = document.getElementById('nav');
+  addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 8), { passive: true });
+
+  // revelar ao rolar
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
+  }), { threshold: .12 });
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transitionDelay = (i % 3) * 80 + 'ms';
+    io.observe(el);
+  });
+
+  // calculadora
+  const brl = v => 'R$ ' + Math.round(v).toLocaleString('pt-BR');
+  const $p = document.getElementById('parcela'), $c = document.getElementById('carnes');
+  let plano = 49;
+  function calc() {
+    const p = +$p.value, c = +$c.value, total = p * c, liq = total - plano;
+    document.getElementById('o-parcela').textContent = brl(p);
+    document.getElementById('o-carnes').textContent = c;
+    document.getElementById('r-total').textContent = brl(total);
+    document.getElementById('r-liquido').textContent = liq >= 0
+      ? brl(liq) + ' a mais, já descontando o plano.'
+      : 'Ainda faltam ' + brl(-liq) + ' pra cobrir o plano.';
+    const n = Math.ceil(plano / p);
+    document.getElementById('r-note').innerHTML =
+      'Com <b>' + n + (n === 1 ? ' carnê' : ' carnês') + '</b> recuperado' + (n === 1 ? '' : 's') + ' o Gabriel já se pagou.';
+  }
+  $p.addEventListener('input', calc); $c.addEventListener('input', calc);
+  document.querySelectorAll('#planos button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#planos button').forEach(x => x.className = 'btn btn-ghost');
+    b.className = 'btn btn-primary';
+    plano = +b.dataset.v; calc();
+  }));
+  calc();
+</script>
+</body>
+</html>
