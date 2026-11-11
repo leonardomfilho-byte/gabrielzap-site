@@ -359,6 +359,101 @@
     .final { padding: 48px 22px; }
     .hero-ctas .btn { width: 100%; }
   }
+  /* ===== Abertura de cinema: carnê 3D que vira mensagens ===== */
+  .cine { position: relative; height: 560svh; }
+  .cine-palco {
+    position: sticky; top: 0; height: 100svh; overflow: hidden;
+    padding: 68px max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px));
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); align-items: center;
+    max-width: 1240px; margin: 0 auto;
+  }
+  .cine-refletor { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(42% 52% at 66% 54%, rgba(45,212,191, calc(.05 + var(--brilho, 0) * .16)), transparent 70%); }
+  .cine-roteiro { position: relative; z-index: 2; height: 100%; }
+  .cine-fala {
+    position: absolute; left: 0; right: 0; top: 50%;
+    transform: translateY(calc(-50% + 22px)); opacity: 0; visibility: hidden;
+    transition: opacity .2s ease, transform .2s ease, visibility 0s .2s;
+    display: grid; gap: 16px; max-width: 32rem;
+  }
+  .cine-fala.on { opacity: 1; visibility: visible; transform: translateY(-50%); transition: opacity .5s ease .2s, transform .5s cubic-bezier(.2,.7,.2,1) .2s; }
+  .cine-olho { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .cine-fala h1, .cine-fala h2 { margin: 0; font-weight: 800; letter-spacing: -.035em; line-height: 1.03; font-size: clamp(32px, 5.2vw, 64px); text-wrap: balance; }
+  .cine-fala p { color: var(--muted); font-size: clamp(15px, 1.5vw, 18px); max-width: 38ch; }
+  .cine-fala .hero-ctas { margin: 8px 0 0; }
+  .cine-fala .cine-valor { font-weight: 800; font-variant-numeric: tabular-nums; font-size: clamp(48px, 7vw, 88px); letter-spacing: -.04em; line-height: 1; color: var(--accent) !important; max-width: none !important; }
+
+  .cine-3d { position: relative; height: 100%; display: grid; place-items: center; perspective: 1300px; perspective-origin: 50% 40%; }
+  .cine-escala { transform-style: preserve-3d; transform: scale(var(--k, 1)); }
+  .cine-mundo { position: relative; width: 0; height: 0; transform-style: preserve-3d; will-change: transform; }
+  .cine-sombra { position: absolute; left: -190px; top: 150px; width: 380px; height: 80px; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(0,0,0,.65), transparent);
+    transform: translateZ(-260px) rotateX(80deg); opacity: var(--sombra, .9); pointer-events: none; }
+  .cine-peca { position: absolute; left: -140px; top: -78px; width: 280px; height: 156px; transform-style: preserve-3d; will-change: transform; }
+  .cine-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 10px; }
+  .cine-frente { background: linear-gradient(160deg, #F2EBDD, #E4DAC6); color: #1E293B;
+    box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 18px 40px rgba(0,0,0,.45);
+    display: grid; grid-template-columns: 74px 1fr; overflow: hidden; line-height: 1.3; }
+  .cine-frente::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: linear-gradient(115deg, rgba(255,255,255,var(--luz, 0)), transparent 45%, rgba(0,0,0,calc(var(--luz, 0) * .6))); }
+  .cine-canhoto { border-right: 2px dashed rgba(30,41,59,.28); padding: 12px 8px; display: grid; align-content: space-between; font-size: 9px; color: #5B6475; }
+  .cine-canhoto b { font-size: 15px; color: #1E293B; }
+  .cine-corpo { padding: 12px 14px; display: grid; align-content: space-between; }
+  .cine-loja { font-weight: 800; font-size: 13px; letter-spacing: -.01em; }
+  .cine-rot { font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: #5B6475; }
+  .cine-lin { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .cine-num { font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-size: 14px; font-variant-numeric: tabular-nums; }
+  .cine-barras { height: 22px; opacity: .75; border-radius: 2px;
+    background: repeating-linear-gradient(90deg, #1E293B 0 2px, transparent 2px 4px, #1E293B 4px 5px, transparent 5px 8px, #1E293B 8px 11px, transparent 11px 12px); }
+  .cine-carimbo { position: absolute; right: 14px; top: 46px; transform: rotate(-11deg); font-weight: 800; font-size: 13px; letter-spacing: .12em;
+    color: #D9473D; border: 2px solid #D9473D; border-radius: 4px; padding: 1px 7px; opacity: var(--atraso, 0); }
+  .cine-capa .cine-frente { grid-template-columns: 1fr; background: linear-gradient(150deg, #13304A, #0B1D30); color: var(--text); }
+  .cine-capa .cine-corpo { padding: 18px 20px; }
+  .cine-capa .cine-loja { font-size: 15px; }
+  .cine-capa .cine-rot { color: #8FB3C9; }
+  .cine-titulo { font-weight: 800; font-size: 26px; letter-spacing: -.02em; line-height: 1; }
+  .cine-costas { transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: center; padding: 0 6px; }
+  .cine-bolha { max-width: 92%; padding: 9px 12px 6px; border-radius: 14px; font-size: 13px; line-height: 1.38; color: var(--text); box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+  .cine-bolha.sai { align-self: flex-end; background: var(--wa-bubble); border-bottom-right-radius: 4px; }
+  .cine-bolha.chega { align-self: flex-start; background: #16263B; border-bottom-left-radius: 4px; }
+  .cine-bolha .h { display: block; text-align: right; font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .cine-bolha b { color: #fff; }
+  .cine-pix { margin-top: 6px; display: flex; justify-content: space-between; gap: 8px; font-size: 11px; background: rgba(255,255,255,.07); border-radius: 8px; padding: 5px 8px; }
+  .cine-pix i { font-style: normal; color: var(--accent); font-weight: 700; font-size: 10px; letter-spacing: .08em; }
+  .cine-topo { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: #0F1B2D; box-shadow: 0 10px 30px rgba(0,0,0,.35); line-height: 1.3; }
+  .cine-av { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--bg); font-weight: 800; font-size: 13px; flex: none; }
+  .cine-topo b { display: block; font-size: 14px; }
+  .cine-topo small { font-size: 11px; color: var(--muted); }
+  .cine-celular { position: absolute; left: -165px; top: -330px; width: 330px; height: 660px; border-radius: 46px;
+    border: 10px solid #1C2537; background: #08101D; box-shadow: 0 0 0 1px #2A3550, 0 50px 120px rgba(0,0,0,.6);
+    opacity: var(--cel, 0); pointer-events: none; transform: translateZ(-40px) translateY(calc((1 - var(--cel, 0)) * 120px)); }
+  .cine-celular::before { content: ""; position: absolute; top: 10px; left: 50%; width: 90px; height: 22px; border-radius: 12px; background: #1C2537; transform: translateX(-50%); }
+  .cine-etq { position: absolute; z-index: 3; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+    display: flex; align-items: center; gap: 8px; opacity: var(--etq, 0); pointer-events: none; white-space: nowrap; }
+  .cine-etq::before { content: ""; width: 28px; height: 1px; background: var(--accent); }
+  .cine-fita { position: absolute; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); transform: translateX(-50%); width: min(220px, 50vw); height: 3px; border-radius: 3px; background: var(--border); overflow: hidden; z-index: 4; }
+  .cine-fita i { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: left; transform: scaleX(var(--p, 0)); }
+  .cine-desce { position: absolute; z-index: 4; bottom: calc(env(safe-area-inset-bottom, 0px) + 32px); left: 50%; transform: translateX(-50%); font-size: 12px; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; opacity: calc(1 - var(--p, 0) * 30); white-space: nowrap; }
+
+  @media (max-width: 760px) {
+    .cine-palco { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; padding-top: 76px; }
+    .cine-roteiro { height: 36svh; }
+    .cine-fala { top: auto; bottom: 0; transform: translateY(18px); }
+    .cine-fala.on { transform: none; }
+    .cine-fala h1, .cine-fala h2 { font-size: clamp(27px, 8.2vw, 38px); }
+    .cine-fala p { font-size: 15px; }
+    .cine-fala .hero-ctas { display: none; }
+    .cine-3d { perspective: 1000px; }
+    .cine-etq { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cine { height: auto; }
+    .cine-palco { position: static; height: auto; display: block; overflow: visible; padding-block: 96px 48px; }
+    .cine-roteiro { height: auto; display: grid; gap: 48px; }
+    .cine-fala { position: static; opacity: 1; visibility: visible; transform: none; }
+    .cine-3d { height: 520px; }
+    .cine-fita, .cine-desce { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -381,55 +476,77 @@
   </div>
 </nav>
 
-<header class="hero">
-  <div class="bg-grid"></div>
-  <div class="wrap hero-grid">
-    <div>
-      <span class="pill"><span class="dot"></span>WhatsApp oficial da Meta · do número da sua loja</span>
-      <h1>Seu crediário cobrado <span class="grad">no automático.</span></h1>
-      <p class="lead">Você não precisa mais cobrar ninguém. O Gabriel lembra o cliente antes do vencimento, cobra com educação depois, calcula multa e juros e manda a chave Pix da loja. De segunda a sexta, às 9h, sem ninguém da sua equipe ter que escrever nada.</p>
-      <div class="hero-ctas">
-        <a href="#precos" class="btn btn-primary btn-lg">Quero cobrar no automático</a>
-        <a href="https://wa.me/5594992426400?text=Ol%C3%A1!%20Quero%20conhecer%20o%20Gabriel." class="btn btn-ghost btn-lg" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg>
-          Falar com a gente
-        </a>
+<div class="cine" id="cine" role="region" aria-label="Um carnê que vira mensagens de WhatsApp">
+  <div class="cine-palco" id="cine-palco">
+    <div class="cine-refletor" aria-hidden="true"></div>
+    <div class="cine-roteiro">
+      <div class="cine-fala on" data-de="0" data-ate="0.15">
+        <span class="cine-olho">WhatsApp oficial da Meta · do número da sua loja</span>
+        <h1>Seu crediário cobrado <span class="grad">no automático.</span></h1>
+        <p>Toda loja de crediário tem um carnê. Role a página e veja o que o Gabriel faz com ele.</p>
+        <div class="hero-ctas">
+          <a href="#precos" class="btn btn-primary btn-lg">Quero cobrar no automático</a>
+          <a href="https://wa.me/5594992426400?text=Ol%C3%A1!%20Quero%20conhecer%20o%20Gabriel." class="btn btn-ghost btn-lg" target="_blank" rel="noopener">Falar com a gente</a>
+        </div>
       </div>
-      <div class="trust">
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>A gente configura tudo pra você</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Roda com o PC desligado</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Planos a partir de R$ 49</span>
+      <div class="cine-fala" data-de="0.17" data-ate="0.43">
+        <span class="cine-olho">Cada folha, uma parcela</span>
+        <h2>E todo mês, alguém <span class="grad">esquece.</span></h2>
+        <p>Não é calote. É gente que trabalha em turno, perdeu a data e só precisava de um lembrete.</p>
       </div>
-      <p class="prova"><b>R$ 717,86 em parcelas atrasadas recuperadas.</b><br>Foi o resultado da Primos Calçados, em Canaã dos Carajás, nas primeiras 8 semanas com o Gabriel: 9 carnês em atraso pagos depois da mensagem, sem ninguém da loja precisar cobrar.</p>
+      <div class="cine-fala" data-de="0.47" data-ate="0.7">
+        <span class="cine-olho">O Gabriel entra em cena</span>
+        <h2>Cada parcela vira <span class="grad">uma mensagem.</span></h2>
+        <p>Lembrete antes do vencimento, cobrança educada depois, multa e juros calculados e a chave Pix da loja junto.</p>
+      </div>
+      <div class="cine-fala" data-de="0.74" data-ate="0.9">
+        <span class="cine-olho">De segunda a sexta, às 9h</span>
+        <h2>Pelo WhatsApp <span class="grad">da sua loja.</span></h2>
+        <p>Do número que o cliente já conhece, pela API oficial da Meta. Ninguém da equipe precisa escrever nada.</p>
+      </div>
+      <div class="cine-fala" data-de="0.92" data-ate="1.01">
+        <span class="cine-olho">Resultado real</span>
+        <p class="cine-valor" id="cine-valor">R$ 717,86</p>
+        <p>em parcelas atrasadas recuperadas pela Primos Calçados, em Canaã dos Carajás, nas primeiras 8 semanas com o Gabriel: 9 carnês pagos depois da mensagem, sem ninguém da loja cobrar.</p>
+      </div>
     </div>
 
-    <div class="phone-wrap">
-      <div class="phone">
-        <div class="screen">
-          <div class="wa-head">
-            <div class="wa-av">PC</div>
-            <div>
-              <div class="wa-name">Primos Calçados</div>
-              <div class="wa-sub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4zm-2 16-4-4 1.4-1.4L10 14.2l6.6-6.6L18 9l-8 8z"/></svg>Conta comercial</div>
-            </div>
+    <div class="cine-3d" id="cine-3d" aria-hidden="true">
+      <div class="cine-escala" id="cine-escala">
+        <div class="cine-mundo" id="cine-mundo">
+          <div class="cine-sombra"></div>
+          <div class="cine-celular"></div>
+          <div class="cine-peca" data-i="4">
+            <div class="cine-face cine-frente"><div class="cine-canhoto"><span>Parcela</span><b>05/10</b><span>R$ 75,85</span></div><div class="cine-corpo"><span class="cine-loja">Primos Calçados</span><div class="cine-lin"><span class="cine-rot">Vencimento</span><span class="cine-num">08/01</span></div><div class="cine-lin"><span class="cine-rot">Valor</span><span class="cine-num">R$ 75,85</span></div><div class="cine-barras"></div></div></div>
+            <div class="cine-face cine-costas"><div class="cine-bolha chega">Pronto, mandei o Pix<span class="h">09:21</span></div></div>
           </div>
-          <div class="chat">
-            <span class="day">05/10</span>
-            <div class="msg out m1">Oi, Joana! 😊 Passando pra lembrar que sua parcela de <b>R$ 75,85</b> vence <b>dia 08</b>.<div class="pix"><span>Pix: primos@loja.com</span><span>COPIAR</span></div><span class="t">09:00 ✓✓</span></div>
-            <span class="day">11/10</span>
-            <div class="msg out m2">Joana, a parcela do dia 08 ficou em aberto. Hoje o valor atualizado é <b>R$ 76,60</b>, com os juros da política da loja. Qualquer coisa, é só responder aqui.<span class="t">09:00 ✓✓</span></div>
-            <div class="msg in m3">Oi! Esqueci totalmente, vou pagar agora 🙏<span class="t">09:14</span></div>
-            <div class="msg in m4">Pronto, mandei o Pix 👍<span class="t">09:21</span></div>
+          <div class="cine-peca" data-i="3">
+            <div class="cine-face cine-frente"><div class="cine-canhoto"><span>Parcela</span><b>04/10</b><span>R$ 75,85</span></div><div class="cine-corpo"><span class="cine-loja">Primos Calçados</span><div class="cine-lin"><span class="cine-rot">Vencimento</span><span class="cine-num">08/12</span></div><div class="cine-lin"><span class="cine-rot">Valor</span><span class="cine-num">R$ 75,85</span></div><div class="cine-barras"></div></div></div>
+            <div class="cine-face cine-costas"><div class="cine-bolha chega">Oi! Esqueci totalmente, vou pagar agora<span class="h">09:14</span></div></div>
+          </div>
+          <div class="cine-peca" data-i="2">
+            <div class="cine-face cine-frente"><div class="cine-canhoto"><span>Parcela</span><b>03/10</b><span>R$ 75,85</span></div><div class="cine-corpo"><span class="cine-loja">Primos Calçados</span><div class="cine-lin"><span class="cine-rot">Vencimento</span><span class="cine-num">08/11</span></div><div class="cine-lin"><span class="cine-rot">Valor</span><span class="cine-num">R$ 75,85</span></div><div class="cine-barras"></div></div><span class="cine-carimbo">ATRASADA</span></div>
+            <div class="cine-face cine-costas"><div class="cine-bolha sai">Joana, a parcela do dia 08 ficou em aberto. Hoje o valor atualizado é <b>R$ 76,60</b>.<span class="h">09:00</span></div></div>
+          </div>
+          <div class="cine-peca" data-i="1">
+            <div class="cine-face cine-frente"><div class="cine-canhoto"><span>Parcela</span><b>02/10</b><span>R$ 75,85</span></div><div class="cine-corpo"><span class="cine-loja">Primos Calçados</span><div class="cine-lin"><span class="cine-rot">Vencimento</span><span class="cine-num">08/10</span></div><div class="cine-lin"><span class="cine-rot">Valor</span><span class="cine-num">R$ 75,85</span></div><div class="cine-barras"></div></div></div>
+            <div class="cine-face cine-costas"><div class="cine-bolha sai">Oi, Joana! Sua parcela de <b>R$ 75,85</b> vence <b>dia 08</b>.<div class="cine-pix"><span>Pix: primos@loja.com</span><i>COPIAR</i></div><span class="h">09:00</span></div></div>
+          </div>
+          <div class="cine-peca cine-capa" data-i="0">
+            <div class="cine-face cine-frente"><div class="cine-corpo"><span class="cine-rot">Carnê de pagamento</span><span class="cine-titulo">Joana R.</span><div class="cine-lin"><span class="cine-loja">Primos Calçados</span><span class="cine-num">10x R$ 75,85</span></div></div></div>
+            <div class="cine-face cine-costas"><div class="cine-topo"><div class="cine-av">PC</div><div><b>Primos Calçados</b><small>conta comercial · WhatsApp oficial</small></div></div></div>
           </div>
         </div>
       </div>
-      <div class="badge-float">
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg></div>
-        <div><small>Carnê recuperado</small><strong>+ R$ 76,60</strong></div>
-      </div>
+      <span class="cine-etq" style="right: 4%; top: 24%">capa do carnê</span>
+      <span class="cine-etq" style="right: 2%; top: 50%">parcela 03/10 · atrasada</span>
+      <span class="cine-etq" style="right: 6%; top: 74%">parcelas futuras</span>
     </div>
+
+    <div class="cine-fita" aria-hidden="true"><i></i></div>
+    <span class="cine-desce" aria-hidden="true">Role para assistir</span>
   </div>
-</header>
+</div>
 
 <section class="pain">
   <div class="wrap">
@@ -758,6 +875,80 @@
     plano = +b.dataset.v; calc();
   }));
   calc();
+</script>
+<script>
+  // Abertura de cinema: o carnê se desmonta com a rolagem e vira mensagens no celular.
+  (function () {
+    var filme = document.getElementById('cine');
+    if (!filme) return;
+    var palco = document.getElementById('cine-palco');
+    var mundo = document.getElementById('cine-mundo');
+    var escala = document.getElementById('cine-escala');
+    var cena3d = document.getElementById('cine-3d');
+    var falas = [].slice.call(filme.querySelectorAll('.cine-fala'));
+    var pecas = [].slice.call(filme.querySelectorAll('.cine-peca')).sort(function (a, b) { return a.dataset.i - b.dataset.i; });
+    var valor = document.getElementById('cine-valor');
+    var parado = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var ALVO = 717.86;
+    var brl = function (v) { return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
+
+    // [x, y, z, rotX, rotY, rotZ] de cada peça (0 = capa, 1..4 = folhas)
+    var A = [0, 1, 2, 3, 4].map(function (i) { return [0, 0, 20 - i * 5, 0, 0, 0]; });
+    var B = [[10, -40, 230, 0, 0, -4], [-4, -14, 115, 0, 0, 2], [14, 10, 0, 0, 0, -2], [-8, 34, -115, 0, 0, 3], [6, 58, -230, 0, 0, -1]];
+    var C = [[-30, -230, 60, -8, 140, -6], [60, -110, 120, 10, 160, 6], [-50, 10, 40, -6, 170, -5], [40, 120, 90, 8, 175, 4], [-20, 230, 30, -4, 178, -3]];
+    var D = [[0, -245, 0, 0, 180, 0], [0, -135, 0, 0, 180, 0], [0, -20, 0, 0, 180, 0], [0, 85, 0, 0, 180, 0], [0, 175, 0, 0, 180, 0]];
+    var CAM = { A: [58, 0, -24, 1.0], B: [16, -32, -6, 0.86], C: [0, -8, 0, 0.82], D: [0, 0, 0, 0.8] };
+
+    function suave(t) { t = Math.min(1, Math.max(0, t)); return t * t * (3 - 2 * t); }
+    function mistura(a, b, t) { return a.map(function (v, k) { return v + (b[k] - v) * t; }); }
+    function faixa(p, de, ate) { return suave((p - de) / (ate - de)); }
+
+    function ajustarEscala() {
+      var r = cena3d.getBoundingClientRect();
+      var k = Math.min(1, r.width / 520, r.height / 700);
+      escala.style.setProperty('--k', Math.max(0.5, k).toFixed(3));
+    }
+
+    function desenhar(p, girar) {
+      var tAB = faixa(p, 0.15, 0.36), tBC = faixa(p, 0.46, 0.66), tCD = faixa(p, 0.72, 0.88);
+      var cam = tBC === 0 ? mistura(CAM.A, CAM.B, tAB) : tCD === 0 ? mistura(CAM.B, CAM.C, tBC) : mistura(CAM.C, CAM.D, tCD);
+      var giro = girar ? Math.sin(p * 9) * 6 * (1 - tBC) : 0;
+      mundo.style.transform = 'rotateX(' + cam[0] + 'deg) rotateY(' + (cam[1] + giro) + 'deg) rotateZ(' + cam[2] + 'deg) scale(' + cam[3] + ')';
+      pecas.forEach(function (el, i) {
+        var s = tBC === 0 ? mistura(A[i], B[i], tAB) : tCD === 0 ? mistura(B[i], C[i], tBC) : mistura(C[i], D[i], tCD);
+        el.style.transform = 'translate3d(' + s[0] + 'px,' + s[1] + 'px,' + s[2] + 'px) rotateX(' + s[3] + 'deg) rotateY(' + s[4] + 'deg) rotateZ(' + s[5] + 'deg)';
+        el.style.setProperty('--luz', (0.12 + Math.abs(Math.sin((s[4] + cam[1]) * Math.PI / 180)) * 0.25).toFixed(3));
+      });
+      palco.style.setProperty('--p', p.toFixed(4));
+      palco.style.setProperty('--atraso', faixa(p, 0.3, 0.4).toFixed(3));
+      palco.style.setProperty('--etq', (faixa(p, 0.3, 0.38) * (1 - faixa(p, 0.44, 0.5))).toFixed(3));
+      palco.style.setProperty('--cel', faixa(p, 0.74, 0.86).toFixed(3));
+      palco.style.setProperty('--sombra', (0.9 - tAB * 0.4 - tCD * 0.5).toFixed(3));
+      palco.style.setProperty('--brilho', Math.max(tBC, faixa(p, 0.9, 1)).toFixed(3));
+      falas.forEach(function (f) { f.classList.toggle('on', p >= +f.dataset.de && p < +f.dataset.ate); });
+      valor.textContent = brl(ALVO * faixa(p, 0.91, 0.96));
+    }
+
+    var pedido = false;
+    function quadro() {
+      pedido = false;
+      var r = filme.getBoundingClientRect();
+      var total = filme.offsetHeight - window.innerHeight;
+      desenhar(Math.min(1, Math.max(0, -r.top / Math.max(total, 1))), true);
+    }
+    function agenda() { if (!pedido) { pedido = true; requestAnimationFrame(quadro); } }
+
+    ajustarEscala();
+    addEventListener('resize', function () { ajustarEscala(); agenda(); });
+    if (parado) {
+      desenhar(0.42, false);
+      falas.forEach(function (f) { f.classList.add('on'); });
+      valor.textContent = brl(ALVO);
+      return;
+    }
+    addEventListener('scroll', agenda, { passive: true });
+    quadro();
+  })();
 </script>
 </body>
 </html>
